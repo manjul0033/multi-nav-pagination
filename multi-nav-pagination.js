@@ -1,10 +1,10 @@
 /**
- * This pagination plugin provide page number drop down with prev and next page navigation buttons
+ * This pagination plugin provide page number drop down with first, previous, next and last page navigation buttons
  *@author Manjul Srivastava
  *
  */
 
-// Referenced multiple existing pagination plugins
+// Referenced from multiple existing pagination plugins and JPaginator
 $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings)
 {
   if ( oSettings)
@@ -35,6 +35,7 @@ $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings)
   }
 };
 
+// Extends DataTable to support jPaginator pagination style:
 $.fn.dataTableExt.oPagination.jPaginator = {
   'paginator': $('<span>').html ( '<nav id="m_left"></nav><nav id="o_left"></nav><div class="paginator_p_wrap"><div class="paginator_p_bloc"><!--<a class="paginator_p"></a>--></div></div><nav id="o_right"></nav><nav id="m_right"></nav><div class="paginator_slider ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"><a class="ui-slider-handle ui-state-default ui-corner-all" href="#"></a></div>'),
   'fnInit': function ( oSettings, nPaging, fnCallbackDraw) {
@@ -66,7 +67,10 @@ $.fn.dataTableExt.oPagination.jPaginator = {
   }
 };
 
-$.fn.dataTableExt.oPagination.multiNavPaging = {
+// Paging functionality with drop down page number and First and last page button functionality
+$.fn.dataTableExt.oPagination.multiNavPagation = {
+     
+ 
     "fnInit": function (oSettings, nPaging, fnCallbackDraw) {
          
         var oPaging = oSettings.oInstance.fnPagingInfo();
@@ -95,24 +99,26 @@ $.fn.dataTableExt.oPagination.multiNavPaging = {
          
         $(nPaging)
             .append(nFirst)
+            .append(nPrevious)
             .append(nInput)
             .append(nOf)
+            .append(nNext)
             .append(nLast);
         
-        $(nInput).change(function (e) { 
+        $(nInput).change(function (e) {
             window.scroll(0,0);
             if (this.value === "" || this.value.match(/[^0-9]/)) {
                 return;
             }
             var iNewStart = oSettings._iDisplayLength * (this.value - 1);
-            if (iNewStart > oSettings.fnRecordsDisplay()) { /* Display overrun */
+            if (iNewStart > oSettings.fnRecordsDisplay()) {
                 oSettings._iDisplayStart = (Math.ceil((oSettings.fnRecordsDisplay() - 1) / oSettings._iDisplayLength) - 1) * oSettings._iDisplayLength;
                 fnCallbackDraw(oSettings);
                 return;
             }
             oSettings._iDisplayStart = iNewStart;
             fnCallbackDraw(oSettings);
-        }); /* Take the brutal approach to cancelling text selection */
+        });
         
         $('span', nPaging).bind('mousedown', function () {
             return false;
@@ -150,7 +156,7 @@ $.fn.dataTableExt.oPagination.multiNavPaging = {
         }).bind('selectstart', function () { return false; });
    
         nPageNumBox.change(function () {
-            var pageValue = parseInt($(this).val(), 10) - 1 ; // -1 because pages are 0 indexed, but the UI is 1
+            var pageValue = parseInt($(this).val(), 10) - 1 ;
             var oPaging = oSettings.oInstance.fnPagingInfo();
              
             if(pageValue === NaN || pageValue<0 ){
@@ -172,6 +178,7 @@ $.fn.dataTableExt.oPagination.multiNavPaging = {
         var oPaging = oSettings.oInstance.fnPagingInfo(); 
         var iPages = Math.ceil((oSettings.fnRecordsDisplay()) / oSettings._iDisplayLength);
         var iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1;
+
         var an = oSettings.aanFeatures.p;
         
         $(an).find('span.paginate_total').html(oPaging.iTotalPages);
@@ -193,13 +200,15 @@ $.fn.dataTableExt.oPagination.multiNavPaging = {
                         elSel.add(oOption);
                     }
                 }
-                spans[1].innerHTML = "&nbsp;of&nbsp;" + iPages;
+                spans[2].innerHTML = "&nbsp;out&nbsp;of&nbsp;" + iPages;
             }
           elSel.value = iCurrentPage;
         }
         
         $(an).each(function(index,item) {
+ 
             var $item = $(item);
+            
             if (oPaging.iPage == 0) {
                 var prev = $item.find('span.paginate_button.first').add($item.find('span.paginate_button.previous'));
                 prev.addClass("disabled");
@@ -207,6 +216,7 @@ $.fn.dataTableExt.oPagination.multiNavPaging = {
                 var prev = $item.find('span.paginate_button.first').add($item.find('span.paginate_button.previous'));
                 prev.removeClass("disabled");
             }
+   
             if (oPaging.iPage+1 == oPaging.iTotalPages) {
                 var next = $item.find('span.paginate_button.last').add($item.find('span.paginate_button.next'));
                 next.addClass("disabled");
@@ -215,5 +225,6 @@ $.fn.dataTableExt.oPagination.multiNavPaging = {
                 next.removeClass("disabled");
             }
         });
-    }      
+    }
+        
 };
