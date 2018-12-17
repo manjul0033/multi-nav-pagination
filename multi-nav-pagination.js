@@ -66,7 +66,7 @@ $.fn.dataTableExt.oPagination.jPaginator = {
   }
 };
 
-$.fn.dataTableExt.oPagination.upsPaging = {
+$.fn.dataTableExt.oPagination.multiNavPaging = {
     "fnInit": function (oSettings, nPaging, fnCallbackDraw) {
          
         var oPaging = oSettings.oInstance.fnPagingInfo();
