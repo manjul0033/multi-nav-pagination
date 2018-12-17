@@ -6,6 +6,6 @@ It provide multiple and convinient pagination options with optimal space utiliza
 To install just put this plugin js file into your project js lib, include in html page as script and then add datatable option to use this plugin. i.e.
 $(document).ready(function() {
         $('#example').dataTable( {
-            "pagingType": "scrolling"
+            "pagingType": "multiNavPaging"
         } );
     } );
